@@ -30,3 +30,6 @@ An all-in-one fitness and health app built around a player card: stats grow only
 - Match `design/screens/` for layout and hierarchy; use the tokens, not pixel values.
 - Keep the brand name in one constant (final name pending).
 - Write tests for the XP math, schedules, alerts and AI output validation.
+- Follow `AGENTS.md` for Expo: check the versioned docs for the installed SDK before using an Expo API, add packages with `npx expo install`, never edit `ios/` or `android/`.
+- Run `npm run check` (typecheck, lint, tests) before calling any step done.
+- The owner is new to coding and family members review on GitHub: explain changes in plain language and keep commits small, one step each.

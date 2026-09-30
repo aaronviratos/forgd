@@ -39,3 +39,11 @@ desktop.ini
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Expo generated
+expo-env.d.ts
+.kotlin/
+*.orig.*
+*.mobileprovision
+.metro-health-check*
+*.tsbuildinfo

@@ -29,12 +29,12 @@ Local-first sync (write on the phone, sync later, never lose data) is the hardes
 ## Folder layout
 
 ```
-app/                 screens (Expo Router)
-  (auth)/            sign in, sign up, reset password
-  (gate)/            date of birth, terms, disclaimer, units
-  (tabs)/            home, today, plan, progress (+ opens a sheet)
-  profile/, coach/   placeholders
 src/
+  app/               screens (Expo Router; Expo SDK 57 keeps them under src/)
+    (auth)/          sign in, sign up, reset password
+    (gate)/          date of birth, terms, disclaimer, units
+    (tabs)/          home, today, plan, progress (+ opens a sheet)
+    profile/, coach/ placeholders
   core/              pure logic, no phone code: units, log dates, later XP and alerts.
                      Shared with the server so rules are written once (07, decision 8).
   config/brand.ts    the app name, in one place

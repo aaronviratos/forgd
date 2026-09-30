@@ -1,0 +1,4 @@
+prototype/
+design/
+*.md
+package-lock.json
