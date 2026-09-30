@@ -5,6 +5,9 @@
  * - Tells Metro to use the Expo Go stand-in for the native SQLite driver (FORGD_EXPO_GO=1).
  * - Puts this computer's Wi-Fi address in the QR code, skipping virtual adapters such as
  *   Windows Mobile Hotspot (192.168.137.x) that a phone cannot reach.
+ * - Supabase refuses sign-in links that return to a bare IP address, so email-link sign-in
+ *   needs `--tunnel` (a named address) or an emailed code. `--sslip` writes the address as
+ *   a name (192.168.4.131.sslip.io) instead, but many home routers block such names.
  *
  * Extra arguments pass through to `expo start`, e.g. `npm run go -- --tunnel` when the phone
  * and computer are on different networks, or `npm run go -- --clear` to rebuild from scratch.
@@ -14,6 +17,7 @@ import { networkInterfaces } from 'node:os';
 
 const args = process.argv.slice(2);
 const tunnel = args.includes('--tunnel');
+const sslip = args.includes('--sslip');
 
 /** The best guess at this computer's Wi-Fi/LAN address. */
 function lanAddress() {
@@ -35,12 +39,13 @@ const env = { ...process.env, FORGD_EXPO_GO: '1' };
 if (!tunnel && !env.REACT_NATIVE_PACKAGER_HOSTNAME) {
   const lan = lanAddress();
   if (lan) {
-    env.REACT_NATIVE_PACKAGER_HOSTNAME = lan.address;
-    console.log(`Using ${lan.address} (${lan.name}) for the QR code.`);
+    env.REACT_NATIVE_PACKAGER_HOSTNAME = sslip ? `${lan.address}.sslip.io` : lan.address;
+    console.log(`Using ${env.REACT_NATIVE_PACKAGER_HOSTNAME} (${lan.name}) for the QR code.`);
   }
 }
 
-const expoArgs = ['expo', 'start', ...(tunnel ? [] : ['--lan']), ...args];
+const passThrough = args.filter((a) => a !== '--sslip');
+const expoArgs = ['expo', 'start', ...(tunnel ? [] : ['--lan']), ...passThrough];
 const child = spawn('npx', expoArgs, {
   env,
   stdio: 'inherit',
