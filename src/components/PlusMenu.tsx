@@ -1,7 +1,8 @@
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { type Href, router } from 'expo-router';
 import { forwardRef, type RefObject } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Tap } from './motion';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space, touch } from '@/theme/tokens';
@@ -82,20 +83,19 @@ export const PlusMenu = forwardRef<BottomSheetModal>(function PlusMenu(_props, r
       </View>
       <View style={styles.grid}>
         {ACTIONS.map(({ label, icon: IconCmp, href }) => (
-          <Pressable
+          <Tap
             key={label}
             role="button"
             aria-label={label}
             onPress={() => go(href)}
-            style={({ pressed }) => [
+            style={[
               styles.tile,
               { backgroundColor: colors.surface, borderColor: colors.lineStrong },
-              pressed && styles.pressed,
             ]}
           >
             <IconCmp size={26} color={colors.accentText} weight="regular" />
             <Text variant="bodyStrong">{label}</Text>
-          </Pressable>
+          </Tap>
         ))}
       </View>
     </Sheet>
@@ -122,5 +122,4 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: space.sm,
   },
-  pressed: { opacity: 0.7 },
 });

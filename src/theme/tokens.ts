@@ -26,28 +26,18 @@ export const touch = {
   primary: 48,
 } as const;
 
-/** Only three levels: flat (outlined), raised, overlay. */
-export const elevation = {
-  flat: {},
-  raised: {
-    shadowColor: '#000',
-    shadowOpacity: 0.14,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-  },
-  overlay: {
-    shadowColor: '#000',
-    shadowOpacity: 0.28,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 12,
-  },
-} as const;
+/** Elevation has three levels: flat (outlined), raised, overlay. Shadows live in the theme
+ * (theme.shadows) because light and dark mode need different ones. */
 
+/** Durations in ms (docs/02, Motion). */
 export const motion = {
+  /** Section content sliding in from the side you tapped. */
   slideIn: 300,
   slideOut: 190,
+  /** Page entrance when switching tabs (fade up 8pt). */
   pageFade: 260,
+  /** Menu dropping from the top bar. */
+  menu: 220,
+  /** Half of the card flip. */
   flipHalf: 140,
 } as const;

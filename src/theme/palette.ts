@@ -10,6 +10,7 @@
 export type Mode = 'light' | 'dark';
 
 export type AccentKey =
+  | 'ember'
   | 'blaze'
   | 'copper'
   | 'gold'
@@ -34,6 +35,12 @@ type AccentMode = {
 
 export const ACCENTS: Record<AccentKey, { label: string; light: AccentMode; dark: AccentMode }> = {
   // Light `text` values are darker than `fill` so accent text stays readable on light backgrounds.
+  // Ember (default): red with a touch of orange, between Blaze and Crimson.
+  ember: {
+    label: 'Ember',
+    light: { fill: '#C2301C', text: '#A92A18' },
+    dark: { fill: '#FF5E3A', text: '#FF5E3A' },
+  },
   blaze: {
     label: 'Blaze',
     light: { fill: '#BF4509', text: '#9D3907' },
@@ -287,3 +294,10 @@ export const RANK_COLORS = {
   platinum: '#2E9C9C',
   diamond: '#6D5BFF',
 } as const;
+
+/**
+ * Strength of the accent glow on plate panels (Home header), as a blend amount.
+ * 0.10 is the most that keeps plate text readable over it with every accent;
+ * palette.test.ts enforces that.
+ */
+export const PLATE_GLOW = 0.1;

@@ -5,7 +5,8 @@ import {
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import { forwardRef, type ReactNode, useCallback } from 'react';
-import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Tap } from './motion';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/theme/ThemeProvider';
@@ -59,7 +60,7 @@ export const Sheet = forwardRef<BottomSheetModal, SheetProps>(function Sheet(
           <Text variant="title2" style={styles.title}>
             {title}
           </Text>
-          <Pressable
+          <Tap
             role="button"
             aria-label="Close"
             onPress={close}
@@ -67,7 +68,7 @@ export const Sheet = forwardRef<BottomSheetModal, SheetProps>(function Sheet(
             style={[styles.close, { borderColor: colors.lineStrong }]}
           >
             <Text variant="title3">✕</Text>
-          </Pressable>
+          </Tap>
         </View>
         {children}
       </BottomSheetScrollView>

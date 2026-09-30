@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Tap } from './motion';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space, touch } from '@/theme/tokens';
@@ -30,22 +31,18 @@ export function Segmented<T extends string | boolean>({
       {options.map((o) => {
         const on = o.value === value;
         return (
-          <Pressable
+          <Tap
             key={String(o.value)}
             role="radio"
             aria-label={o.label}
             aria-checked={on}
             onPress={() => onChange(o.value)}
-            style={({ pressed }) => [
-              styles.option,
-              on && { backgroundColor: colors.accent },
-              pressed && !on && styles.pressed,
-            ]}
+            style={[styles.option, on && { backgroundColor: colors.accent }]}
           >
             <Text variant="bodyStrong" tone={on ? 'accentInk' : 'ink'}>
               {o.label}
             </Text>
-          </Pressable>
+          </Tap>
         );
       })}
     </View>
@@ -73,5 +70,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: space.md,
   },
-  pressed: { opacity: 0.7 },
 });

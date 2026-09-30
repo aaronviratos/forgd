@@ -1,10 +1,10 @@
 import { StyleSheet, View, type ViewProps } from 'react-native';
 
 import { useTheme } from '@/theme/ThemeProvider';
-import { elevation, radius, space } from '@/theme/tokens';
+import { radius, space } from '@/theme/tokens';
 
 export type CardProps = ViewProps & {
-  /** Raised cards (active step card, athlete card) get a soft shadow; most cards are flat. */
+  /** Raised cards (active step card, athlete card, Home header) get a soft shadow; most are flat. */
   raised?: boolean;
   /** Dark "plate" panel, like the Home header. */
   plate?: boolean;
@@ -13,17 +13,19 @@ export type CardProps = ViewProps & {
 };
 
 export function Card({ raised, plate, accentTop, style, ...rest }: CardProps) {
-  const { colors } = useTheme();
+  const { colors, shadows, mode } = useTheme();
+  // In dark mode a raised surface also gets a faint light edge, since shadows barely show.
+  const edge = raised && mode === 'dark' ? 'rgba(255,255,255,0.08)' : undefined;
   return (
     <View
       style={[
         styles.card,
         {
           backgroundColor: plate ? colors.plate : colors.surface,
-          borderColor: plate ? colors.plate : colors.line,
+          borderColor: edge ?? (plate ? colors.plate : colors.line),
         },
         accentTop && { borderTopWidth: 5, borderTopColor: colors.accent },
-        raised && elevation.raised,
+        raised && shadows.raised,
         style,
       ]}
       {...rest}

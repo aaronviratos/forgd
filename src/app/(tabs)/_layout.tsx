@@ -1,7 +1,8 @@
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
 import { useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Tap } from '@/components/motion';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ChartBar, ClipboardText, CalendarBlank, House, Plus } from '@/components/icons';
@@ -10,7 +11,7 @@ import { PlusMenu } from '@/components/PlusMenu';
 import { TabButton, tapFeedback } from '@/components/TabButton';
 import { TopBar } from '@/components/TopBar';
 import { useTheme } from '@/theme/ThemeProvider';
-import { elevation, radius } from '@/theme/tokens';
+import { radius } from '@/theme/tokens';
 
 /**
  * The main app frame: top bar, the current page, and the bottom tab bar with the
@@ -18,7 +19,7 @@ import { elevation, radius } from '@/theme/tokens';
  * in this frame too, reached from the top bar instead of a tab.
  */
 export default function TabsLayout() {
-  const { colors } = useTheme();
+  const { colors, shadows } = useTheme();
   const insets = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
   const [topBarHeight, setTopBarHeight] = useState(0);
@@ -50,22 +51,22 @@ export default function TabsLayout() {
         </TabTrigger>
 
         <View style={styles.plusSlot}>
-          <Pressable
+          <Tap
             role="button"
             aria-label="Log something"
             onPress={() => {
               tapFeedback();
               plus.current?.present();
             }}
-            style={({ pressed }) => [
+            scaleTo={0.9}
+            style={[
               styles.plus,
-              elevation.raised,
+              shadows.accentGlow,
               { backgroundColor: colors.accent, borderColor: colors.bg },
-              pressed && styles.pressed,
             ]}
           >
             <Plus size={30} color={colors.accentInk} weight="bold" />
-          </Pressable>
+          </Tap>
         </View>
 
         <TabTrigger name="plan" href="/plan" asChild>
@@ -107,5 +108,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   hidden: { display: 'none' },
-  pressed: { opacity: 0.8, transform: [{ scale: 0.96 }] },
 });

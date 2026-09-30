@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Tap } from './motion';
 
 import { ACCENT_KEYS, ACCENTS, SURFACE_KEYS, SURFACES } from '@/theme/palette';
 import { useThemeContext } from '@/theme/ThemeProvider';
@@ -33,7 +34,7 @@ export function AppearanceSettings() {
         {ACCENT_KEYS.map((k) => {
           const on = prefs.accent === k;
           return (
-            <Pressable
+            <Tap
               key={k}
               role="radio"
               aria-label={ACCENTS[k].label}
@@ -53,7 +54,7 @@ export function AppearanceSettings() {
               <Text variant="caption" tone={on ? 'ink' : 'muted'} center>
                 {ACCENTS[k].label}
               </Text>
-            </Pressable>
+            </Tap>
           );
         })}
       </View>

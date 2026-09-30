@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Tap } from './motion';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/theme/ThemeProvider';
@@ -33,16 +34,16 @@ export function TopBar({ menuOpen, onMenu }: TopBarProps) {
         },
       ]}
     >
-      <Pressable
+      <Tap
         role="button"
         aria-label="Profile"
         onPress={() => router.navigate('/profile')}
         style={[styles.avatar, { borderColor: colors.plateLine }]}
       >
         <User size={22} color={colors.plateInk} weight="fill" />
-      </Pressable>
+      </Tap>
 
-      <Pressable
+      <Tap
         role="link"
         aria-label="Home"
         onPress={() => router.navigate('/')}
@@ -50,39 +51,35 @@ export function TopBar({ menuOpen, onMenu }: TopBarProps) {
         style={styles.wordmark}
       >
         <Wordmark size={22} />
-      </Pressable>
+      </Tap>
 
       <View style={styles.spacer} />
 
-      <Pressable
+      <Tap
         role="button"
         aria-label="Coach"
         onPress={() => router.navigate('/coach')}
-        style={({ pressed }) => [
-          styles.coach,
-          { borderColor: colors.accentOnPlate },
-          pressed && styles.pressed,
-        ]}
+        style={[styles.coach, { borderColor: colors.accentOnPlate }]}
       >
         <Sparkle size={18} color={colors.accentOnPlate} weight="fill" />
         <Text variant="bodyStrong" tone="plateInk" maxFontSizeMultiplier={1.2}>
           Coach
         </Text>
-      </Pressable>
+      </Tap>
 
-      <Pressable
+      <Tap
         role="button"
         aria-label={menuOpen ? 'Close menu' : 'Menu'}
         aria-expanded={menuOpen}
         onPress={onMenu}
-        style={({ pressed }) => [styles.menu, pressed && styles.pressed]}
+        style={[styles.menu]}
       >
         {menuOpen ? (
           <X size={24} color={colors.plateInk} weight="bold" />
         ) : (
           <List size={24} color={colors.plateInk} weight="bold" />
         )}
-      </Pressable>
+      </Tap>
     </View>
   );
 }
@@ -117,5 +114,4 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   menu: { width: touch.min, height: touch.min, alignItems: 'center', justifyContent: 'center' },
-  pressed: { opacity: 0.7 },
 });

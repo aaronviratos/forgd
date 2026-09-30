@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Tap } from './motion';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space, touch } from '@/theme/tokens';
@@ -20,23 +21,22 @@ export type ChipProps = {
 export function Chip({ label, selected, onPress, role = 'checkbox' }: ChipProps) {
   const { colors } = useTheme();
   return (
-    <Pressable
+    <Tap
       role={role}
       aria-label={label}
       aria-checked={!!selected}
       onPress={onPress}
-      style={({ pressed }) => [
+      style={[
         styles.chip,
         {
           backgroundColor: selected ? colors.accentSoft : colors.surface,
           borderColor: selected ? colors.accent : colors.lineStrong,
           borderWidth: selected ? 2 : 1.5,
         },
-        pressed && styles.pressed,
       ]}
     >
       <Text variant="bodyStrong">{selected ? `✓ ${label}` : label}</Text>
-    </Pressable>
+    </Tap>
   );
 }
 
@@ -48,5 +48,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pressed: { opacity: 0.75 },
 });

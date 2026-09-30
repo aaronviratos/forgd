@@ -1,4 +1,5 @@
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { Tap } from './motion';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius, space, touch } from '@/theme/tokens';
@@ -32,7 +33,7 @@ export function Button({
 
   if (variant === 'link') {
     return (
-      <Pressable
+      <Tap
         role="button"
         aria-label={label}
         aria-disabled={inactive}
@@ -40,12 +41,12 @@ export function Button({
         disabled={inactive}
         onPress={onPress}
         hitSlop={12}
-        style={({ pressed }) => [styles.link, pressed && styles.pressed]}
+        style={[styles.link]}
       >
         <Text variant="bodyStrong" tone={inactive ? 'muted' : 'accent'} style={styles.underline}>
           {label}
         </Text>
-      </Pressable>
+      </Tap>
     );
   }
 
@@ -56,7 +57,7 @@ export function Button({
   const tone = inactive ? 'muted' : primary ? 'accentInk' : 'ink';
 
   return (
-    <Pressable
+    <Tap
       role="button"
       aria-label={label}
       aria-disabled={inactive}
@@ -64,7 +65,7 @@ export function Button({
       accessibilityHint={accessibilityHint}
       disabled={inactive}
       onPress={onPress}
-      style={({ pressed }) => [
+      style={[
         styles.button,
         {
           backgroundColor: bg,
@@ -72,7 +73,6 @@ export function Button({
           minHeight: primary ? touch.primary : touch.min,
         },
         block && styles.block,
-        pressed && styles.pressed,
       ]}
     >
       <View style={styles.row}>
@@ -81,7 +81,7 @@ export function Button({
           {label}
         </Text>
       </View>
-    </Pressable>
+    </Tap>
   );
 }
 
@@ -99,5 +99,4 @@ const styles = StyleSheet.create({
   spinner: { marginRight: space.sm },
   link: { alignSelf: 'flex-start', paddingVertical: space.xs },
   underline: { textDecorationLine: 'underline' },
-  pressed: { opacity: 0.75 },
 });

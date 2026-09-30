@@ -1,13 +1,15 @@
 import { router, usePathname } from 'expo-router';
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { HUBS, type HubKey, hubForPath, MENU_ORDER } from '@/navigation/hubs';
 import { useTheme } from '@/theme/ThemeProvider';
-import { elevation, radius, space, touch } from '@/theme/tokens';
+import { motion, radius, space, touch } from '@/theme/tokens';
 
 import { CaretDown, CaretRight } from './icons';
+import { Tap } from './motion';
 import { Text } from './Text';
 
 export type MenuProps = {
@@ -22,7 +24,7 @@ export type MenuProps = {
  * "Open {hub}" and one chip per section; the current hub starts expanded.
  */
 export function Menu({ open, onClose, top }: MenuProps) {
-  const { colors } = useTheme();
+  const { colors, shadows } = useTheme();
   const insets = useSafeAreaInsets();
   const current = hubForPath(usePathname());
   const [expanded, setExpanded] = useState<HubKey | null>(current);
@@ -46,10 +48,12 @@ export function Menu({ open, onClose, top }: MenuProps) {
         onPress={onClose}
         style={[StyleSheet.absoluteFill, styles.scrim]}
       />
-      <View
+      {/* Drops down from under the top bar. */}
+      <Animated.View
+        entering={FadeInUp.duration(motion.menu)}
         style={[
           styles.panel,
-          elevation.overlay,
+          shadows.overlay,
           { top, backgroundColor: colors.plate, maxHeight: '100%' },
         ]}
       >
@@ -68,13 +72,13 @@ export function Menu({ open, onClose, top }: MenuProps) {
                   { borderLeftColor: isCurrent ? colors.accentOnPlate : 'transparent' },
                 ]}
               >
-                <Pressable
+                <Tap
                   role="button"
                   aria-label={hub.label}
                   aria-expanded={hub.sections.length ? isOpen : undefined}
                   aria-current={isCurrent ? 'page' : undefined}
                   onPress={() => (hub.sections.length ? setExpanded(isOpen ? null : key) : go(key))}
-                  style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+                  style={[styles.row]}
                 >
                   <Text variant="title3" tone="plateInk" style={styles.flex}>
                     {hub.label}
@@ -88,45 +92,41 @@ export function Menu({ open, onClose, top }: MenuProps) {
                   ) : (
                     <CaretRight size={20} color={colors.plateMuted} />
                   )}
-                </Pressable>
+                </Tap>
                 {isOpen && (
-                  <View style={styles.sections}>
-                    <Pressable
+                  <Animated.View entering={FadeIn.duration(180)} style={styles.sections}>
+                    <Tap
                       role="link"
                       aria-label={`Open ${hub.label}`}
                       onPress={() => go(key)}
-                      style={({ pressed }) => [styles.openRow, pressed && styles.pressed]}
+                      style={[styles.openRow]}
                     >
                       <Text variant="bodyStrong" style={{ color: colors.accentOnPlate }}>
                         Open {hub.label} ›
                       </Text>
-                    </Pressable>
+                    </Tap>
                     <View style={styles.chips}>
                       {hub.sections.map((s) => (
-                        <Pressable
+                        <Tap
                           key={s.key}
                           role="link"
                           aria-label={`${hub.label}: ${s.label}`}
                           onPress={() => go(key, s.key)}
-                          style={({ pressed }) => [
-                            styles.chip,
-                            { borderColor: colors.plateLine },
-                            pressed && styles.pressed,
-                          ]}
+                          style={[styles.chip, { borderColor: colors.plateLine }]}
                         >
                           <Text variant="bodyStrong" tone="plateInk">
                             {s.label}
                           </Text>
-                        </Pressable>
+                        </Tap>
                       ))}
                     </View>
-                  </View>
+                  </Animated.View>
                 )}
               </View>
             );
           })}
         </ScrollView>
-      </View>
+      </Animated.View>
     </Modal>
   );
 }
@@ -164,5 +164,4 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     justifyContent: 'center',
   },
-  pressed: { opacity: 0.7 },
 });

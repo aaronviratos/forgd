@@ -30,7 +30,7 @@ Semantic tokens; the accent ("bronze" in code) is user-selectable. Light theme d
 | ink | #1C1F20 | #E6E2D8 | Primary text |
 | muted | #585C56 | #8E928A | Secondary text |
 | line | #A7A398 | #363C3F | Borders, dividers |
-| accent | #BF4509 | #FF6B1A | Primary actions, active states, progress |
+| accent | #C2301C | #FF5E3A | Primary actions, active states, progress (Ember) |
 | accent-ink | #FFFFFF | #150A02 | Text on accent |
 | accent-soft | 16% accent on surface | 22% accent on surface | Selected backgrounds |
 | steel | #4B5828 | #A7B464 | Secondary data (low values, chips) |
@@ -40,13 +40,13 @@ Semantic tokens; the accent ("bronze" in code) is user-selectable. Light theme d
 | plate | #24292B | #252A2C | Dark panels: top bar, card, Home header, menu |
 | plate-ink / plate-muted | #ECE8DE / #A2A69E | #ECE8DE / #9A9E96 | Text on plate |
 
-- **Accent choices (light / dark):** Blaze #BF4509/#FF6B1A (default), Copper #9C4B22/#E08D5F, Gold #8F6200/#E8B64A, Lime #4F7300/#B4DE4E, Olive #5A6B22/#A7B464, Forest #23703F/#6BD192, Teal #0F766E/#4FD1C5, Sky #0B6FA8/#6CC6F5, Steel blue #2F5D8A/#7FB0DE, Royal #3B47C4/#8F9CFF, Violet #6B3CC4/#B79CFF, Magenta #A8206F/#F272C0, Crimson #B0262F/#F0606A, Slate #4B5563/#A9B4C2.
+- **Accent choices (light / dark):** Ember #C2301C/#FF5E3A (default since Milestone 1: red with a touch of orange; light-mode text #A92A18), Blaze #BF4509/#FF6B1A, Copper #9C4B22/#E08D5F, Gold #8F6200/#E8B64A, Lime #4F7300/#B4DE4E, Olive #5A6B22/#A7B464, Forest #23703F/#6BD192, Teal #0F766E/#4FD1C5, Sky #0B6FA8/#6CC6F5, Steel blue #2F5D8A/#7FB0DE, Royal #3B47C4/#8F9CFF, Violet #6B3CC4/#B79CFF, Magenta #A8206F/#F272C0, Crimson #B0262F/#F0606A, Slate #4B5563/#A9B4C2.
 - **Background choices:** Concrete (default), Paper, White, Midnight, Moss (values in the prototype's `SURFACES`).
 - **Rank colors (card border):** Rookie #7C848C, Bronze #A8652E, Silver #8390A0, Gold #C8960C, Platinum #2E9C9C (foil), Diamond #6D5BFF (foil).
 - **Contrast:** all text meets WCAG AA (4.5:1 body, 3:1 large). Check every accent against surface and plate.
 
 ### Legibility adjustments in the native app (built in Milestone 1)
-An audit of the prototype palette found 41 combinations below WCAG AA. The code (`src/theme/palette.ts`) fixes them, and `src/theme/palette.test.ts` checks all 140 themes (14 accents × 5 backgrounds × light/dark) on every build:
+An audit of the prototype palette found 41 combinations below WCAG AA. The code (`src/theme/palette.ts`) fixes them, and `src/theme/palette.test.ts` checks all 150 themes (15 accents × 5 backgrounds × light/dark) on every build:
 - **Accent has two tokens.** `accent` (fill) keeps the prototype color for buttons, progress and active states. `accentText` is used for accent-colored text and icons; in light mode it is darkened just enough to pass on every background (for example Blaze text #9D3907, fill #BF4509).
 - **`lineStrong`** (at least 3:1) outlines inputs, chips and other controls so fields are easy to find. `line` stays for decorative dividers only.
 - **Status colors in light mode** darkened slightly: ok #2C6532, warn #7C510A, bad #A72A21.

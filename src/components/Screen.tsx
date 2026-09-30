@@ -1,11 +1,13 @@
 import { router } from 'expo-router';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import Animated, { FadeInLeft, FadeInRight } from 'react-native-reanimated';
 
 import type { Section } from '@/navigation/hubs';
 import { useTheme } from '@/theme/ThemeProvider';
-import { radius, space, touch } from '@/theme/tokens';
+import { motion, radius, space, touch } from '@/theme/tokens';
 
+import { Tap, useFocusFadeUp } from './motion';
 import { tapFeedback } from './TabButton';
 import { Text } from './Text';
 
@@ -18,13 +20,31 @@ export type ScreenProps = {
   children: ReactNode;
 };
 
-/** Standard page: title, sticky sub-tabs, then content with the screen gutter. */
+/**
+ * Standard page: title, sticky sub-tabs, then content with the screen gutter.
+ * The page fades up when it comes into focus; switching sections slides the new
+ * content in from the side of the tab you tapped.
+ */
 export function Screen({ title, sections, section, children }: ScreenProps) {
   const { colors } = useTheme();
   const hasTabs = !!sections?.length;
+  const current = section ?? sections?.[0]?.key ?? '';
+  const pageIn = useFocusFadeUp();
+
+  // Which way to slide: compare the new section's position with the previous one.
+  const [shown, setShown] = useState({ key: current, dir: 0 });
+  if (shown.key !== current) {
+    const at = (k: string) => sections?.findIndex((s) => s.key === k) ?? 0;
+    setShown({ key: current, dir: at(current) > at(shown.key) ? 1 : -1 });
+  }
+  const entering =
+    shown.dir === 0
+      ? undefined
+      : (shown.dir > 0 ? FadeInRight : FadeInLeft).duration(motion.slideIn);
+
   return (
-    <ScrollView
-      style={{ backgroundColor: colors.bg }}
+    <Animated.ScrollView
+      style={[{ backgroundColor: colors.bg }, pageIn]}
       contentContainerStyle={styles.scroll}
       stickyHeaderIndices={hasTabs ? [title ? 1 : 0] : undefined}
       keyboardShouldPersistTaps="handled"
@@ -34,9 +54,11 @@ export function Screen({ title, sections, section, children }: ScreenProps) {
           <Text variant="title1">{title}</Text>
         </View>
       ) : null}
-      {hasTabs ? <SubTabs sections={sections!} current={section ?? sections![0].key} /> : null}
-      <View style={styles.content}>{children}</View>
-    </ScrollView>
+      {hasTabs ? <SubTabs sections={sections!} current={current} /> : null}
+      <Animated.View key={current} entering={entering} style={styles.content}>
+        {children}
+      </Animated.View>
+    </Animated.ScrollView>
   );
 }
 
@@ -69,7 +91,7 @@ function SubTabs({ sections, current }: { sections: Section[]; current: string }
         {sections.map((s) => {
           const on = s.key === current;
           return (
-            <Pressable
+            <Tap
               key={s.key}
               onLayout={(e) => {
                 const { x, width: w } = e.nativeEvent.layout;
@@ -82,18 +104,17 @@ function SubTabs({ sections, current }: { sections: Section[]; current: string }
                 tapFeedback();
                 router.setParams({ section: s.key });
               }}
-              style={({ pressed }) => [
+              style={[
                 styles.tab,
                 on
                   ? { backgroundColor: colors.ink, borderColor: colors.ink }
                   : { backgroundColor: colors.surface, borderColor: colors.lineStrong },
-                pressed && !on && styles.pressed,
               ]}
             >
               <Text variant="bodyStrong" style={on ? { color: colors.bg } : undefined}>
                 {s.label}
               </Text>
-            </Pressable>
+            </Tap>
           );
         })}
       </ScrollView>
@@ -113,5 +134,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: { paddingHorizontal: space.gutter, paddingTop: space.md, gap: space.lg },
-  pressed: { opacity: 0.7 },
 });

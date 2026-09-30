@@ -1,3 +1,5 @@
+import type { ViewStyle } from 'react-native';
+
 import { mix } from '@/core/color';
 
 import {
@@ -25,7 +27,7 @@ export type UiPrefs = {
 
 export const DEFAULT_UI_PREFS: UiPrefs = {
   theme: 'system',
-  accent: 'blaze',
+  accent: 'ember',
   surface: 'concrete',
   textSize: 'standard',
 };
@@ -61,9 +63,24 @@ export type Colors = {
   steel: string;
 };
 
+/**
+ * Shadows. Each is two layers: a tight contact shadow plus a wide soft one, which reads as
+ * more natural than a single blur. Dark mode uses deeper shadows plus a faint top edge,
+ * because a shadow alone barely shows on a dark background.
+ */
+export type Shadows = {
+  /** Lifted cards: the athlete card, the active step card, the Home header. */
+  raised: ViewStyle;
+  /** Things floating above the page: menu, sheets, rest timer. */
+  overlay: ViewStyle;
+  /** Accent-tinted glow for the + button. */
+  accentGlow: ViewStyle;
+};
+
 export type Theme = {
   mode: Mode;
   colors: Colors;
+  shadows: Shadows;
   /** Multiplier from the in-app Text size setting. */
   textScale: number;
   prefs: UiPrefs;
@@ -74,6 +91,21 @@ export function resolveMode(pref: ThemePref, system: Mode | null | undefined): M
   return system === 'dark' ? 'dark' : 'light';
 }
 
+function buildShadows(mode: Mode, accent: string): Shadows {
+  const glow = `0 6px 16px ${accent}${mode === 'light' ? '59' : '66'}`; // ~35-40% alpha
+  return mode === 'light'
+    ? {
+        raised: { boxShadow: '0 1px 2px rgba(22,20,17,0.10), 0 6px 18px rgba(22,20,17,0.10)' },
+        overlay: { boxShadow: '0 2px 6px rgba(22,20,17,0.10), 0 18px 44px rgba(22,20,17,0.24)' },
+        accentGlow: { boxShadow: `0 1px 2px rgba(22,20,17,0.18), ${glow}` },
+      }
+    : {
+        raised: { boxShadow: '0 1px 2px rgba(0,0,0,0.55), 0 8px 22px rgba(0,0,0,0.45)' },
+        overlay: { boxShadow: '0 4px 12px rgba(0,0,0,0.55), 0 24px 56px rgba(0,0,0,0.65)' },
+        accentGlow: { boxShadow: `0 1px 2px rgba(0,0,0,0.6), ${glow}` },
+      };
+}
+
 export function buildTheme(prefs: UiPrefs, system: Mode | null | undefined): Theme {
   const mode = resolveMode(prefs.theme, system);
   const s = SURFACES[prefs.surface][mode];
@@ -81,6 +113,7 @@ export function buildTheme(prefs: UiPrefs, system: Mode | null | undefined): The
   const st = STATUS[mode];
   return {
     mode,
+    shadows: buildShadows(mode, a.fill),
     textScale: TEXT_SIZES[prefs.textSize].scale,
     prefs,
     colors: {

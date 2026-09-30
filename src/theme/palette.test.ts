@@ -1,10 +1,10 @@
 /**
  * Legibility guard: every theme a user can pick must pass WCAG AA.
- * 14 accents x 5 backgrounds x light/dark = 140 themes, each checked pair by pair.
+ * 15 accents x 5 backgrounds x light/dark = 150 themes, each checked pair by pair.
  */
-import { contrast } from '@/core/color';
+import { contrast, mix } from '@/core/color';
 
-import { ACCENT_KEYS, SURFACE_KEYS } from './palette';
+import { ACCENT_KEYS, PLATE_GLOW, SURFACE_KEYS } from './palette';
 import { buildTheme, type Colors, DEFAULT_UI_PREFS } from './theme';
 
 const TEXT = 4.5; // normal text
@@ -48,6 +48,13 @@ describe('theme contrast', () => {
       ([fg, bg, min]) =>
         `${fg} on ${bg}: ${contrast(colors[fg], colors[bg]).toFixed(2)} (needs ${min})`,
     );
+    // Plate text stays readable where the accent glow is strongest (Home header).
+    const glow = mix(colors.accentOnPlate, colors.plate, PLATE_GLOW);
+    for (const fg of ['plateInk', 'plateMuted'] as const) {
+      if (contrast(colors[fg], glow) < TEXT) {
+        failures.push(`${fg} on the plate glow: ${contrast(colors[fg], glow).toFixed(2)}`);
+      }
+    }
     expect(failures).toEqual([]);
   });
 });

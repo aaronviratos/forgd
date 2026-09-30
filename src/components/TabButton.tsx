@@ -1,7 +1,15 @@
 import * as Haptics from 'expo-haptics';
 import type { TabTriggerSlotProps } from 'expo-router/ui';
-import { forwardRef } from 'react';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { forwardRef, useEffect } from 'react';
+import { Platform, Pressable, StyleSheet, type View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { space, touch } from '@/theme/tokens';
@@ -18,12 +26,31 @@ type TabButtonProps = TabTriggerSlotProps & { icon: Icon; label: string };
 /**
  * One tab in the bottom bar. Active: accent bar on top, filled icon, accent label.
  * Labels are always shown (icons alone are guesswork) and never smaller than 13pt.
+ * Becoming active grows the accent bar from the center and gives the icon a small pop.
  */
 export const TabButton = forwardRef<View, TabButtonProps>(function TabButton(
   { icon: IconCmp, label, isFocused, onPress, ...rest },
   ref,
 ) {
   const { colors } = useTheme();
+  const reduce = useReducedMotion();
+  const active = useSharedValue(isFocused ? 1 : 0);
+  const pop = useSharedValue(1);
+
+  useEffect(() => {
+    if (reduce) {
+      active.set(isFocused ? 1 : 0);
+      return;
+    }
+    active.set(withTiming(isFocused ? 1 : 0, { duration: 200 }));
+    if (isFocused) {
+      pop.set(withSequence(withTiming(1.14, { duration: 110 }), withSpring(1, { damping: 12 })));
+    }
+  }, [isFocused, reduce, active, pop]);
+
+  const bar = useAnimatedStyle(() => ({ transform: [{ scaleX: active.get() }] }));
+  const icon = useAnimatedStyle(() => ({ transform: [{ scale: pop.get() }] }));
+
   return (
     <Pressable
       ref={ref}
@@ -37,14 +64,14 @@ export const TabButton = forwardRef<View, TabButtonProps>(function TabButton(
       }}
       style={styles.tab}
     >
-      <View
-        style={[styles.indicator, { backgroundColor: isFocused ? colors.accent : 'transparent' }]}
-      />
-      <IconCmp
-        size={26}
-        color={isFocused ? colors.accentText : colors.muted}
-        weight={isFocused ? 'fill' : 'regular'}
-      />
+      <Animated.View style={[styles.indicator, { backgroundColor: colors.accent }, bar]} />
+      <Animated.View style={icon}>
+        <IconCmp
+          size={26}
+          color={isFocused ? colors.accentText : colors.muted}
+          weight={isFocused ? 'fill' : 'regular'}
+        />
+      </Animated.View>
       <Text
         variant="caption"
         tone={isFocused ? 'accent' : 'muted'}
