@@ -45,6 +45,16 @@ Semantic tokens; the accent ("bronze" in code) is user-selectable. Light theme d
 - **Rank colors (card border):** Rookie #7C848C, Bronze #A8652E, Silver #8390A0, Gold #C8960C, Platinum #2E9C9C (foil), Diamond #6D5BFF (foil).
 - **Contrast:** all text meets WCAG AA (4.5:1 body, 3:1 large). Check every accent against surface and plate.
 
+### Legibility adjustments in the native app (built in Milestone 1)
+An audit of the prototype palette found 41 combinations below WCAG AA. The code (`src/theme/palette.ts`) fixes them, and `src/theme/palette.test.ts` checks all 140 themes (14 accents × 5 backgrounds × light/dark) on every build:
+- **Accent has two tokens.** `accent` (fill) keeps the prototype color for buttons, progress and active states. `accentText` is used for accent-colored text and icons; in light mode it is darkened just enough to pass on every background (for example Blaze text #9D3907, fill #BF4509).
+- **`lineStrong`** (at least 3:1) outlines inputs, chips and other controls so fields are easy to find. `line` stays for decorative dividers only.
+- **Status colors in light mode** darkened slightly: ok #2C6532, warn #7C510A, bad #A72A21.
+- **On the plate** (dark in both modes) the accent always uses its bright dark-mode fill.
+- **Type:** caption 13 (was 12.5) and overline 12 (was 11); nothing a user reads is below 13. Line heights slightly more generous. The in-app Text size setting offers Standard, Large (×1.15) and Largest (×1.3), on top of the phone's own text size (honored up to ×1.6).
+- **Selected states never rely on color alone:** chips add a check mark and thicker border; errors add a ⚠ and wording.
+- **Touch targets:** 44pt minimum, 48pt for primary buttons and inputs.
+
 ## Spacing, radius, elevation
 - **Spacing scale:** 4, 6, 8, 10, 12, 14, 16, 20, 24, 28. Screen side padding 16.
 - **Radius:** chips and pills 999; inputs 8; cards 14; sheets and the athlete card 18–22 (top corners for bottom sheets).

@@ -3,6 +3,9 @@
   "main": "expo-router/entry",
   "version": "0.1.0",
   "dependencies": {
+    "@expo-google-fonts/atkinson-hyperlegible-next": "^0.4.1",
+    "@expo-google-fonts/saira-stencil-one": "^0.4.1",
+    "@gorhom/bottom-sheet": "^5.2.14",
     "@types/jest": "29.5.14",
     "eslint-config-expo": "~57.0.2",
     "expo": "~57.0.26",
