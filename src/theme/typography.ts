@@ -36,12 +36,13 @@ type Spec = { size: number; line: number; weight: Weight; upper?: boolean; track
 /**
  * Sizes at the "Standard" text size. Two sizes are slightly above the spec for legibility:
  * caption 12.5 -> 13 and overline 11 -> 12. Nothing a user reads is below 13.
+ * Headings are Bold/SemiBold rather than ExtraBold: heavy titles read as crowded (owner feedback).
  */
 export const TYPE_SCALE: Record<TextVariant, Spec> = {
-  display: { size: 34, line: 40, weight: 800 },
-  title1: { size: 28, line: 34, weight: 800 },
-  title2: { size: 24, line: 30, weight: 800 },
-  title3: { size: 20, line: 26, weight: 700 },
+  display: { size: 34, line: 40, weight: 700 },
+  title1: { size: 28, line: 34, weight: 700 },
+  title2: { size: 22, line: 28, weight: 700 },
+  title3: { size: 19, line: 25, weight: 600 },
   body: { size: 16, line: 24, weight: 400 },
   bodyStrong: { size: 16, line: 24, weight: 600 },
   small: { size: 14, line: 20, weight: 400 },

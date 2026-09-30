@@ -9,10 +9,10 @@ Reference: the v2 prototype (`prototype/forgd-v2.html`) and the screenshots in `
 
 | Token | Size / line height | Weight | Use |
 |---|---|---|---|
-| display | 34/38 | 800 | Rare hero numbers |
-| title-1 | 28/32 | 800 | Page titles, greeting |
-| title-2 | 24/28 | 800 | Section titles, sheet titles |
-| title-3 | 20/24 | 700 | Card titles, sub-sections |
+| display | 34/40 | 700 | Rare hero numbers |
+| title-1 | 28/34 | 700 | Page titles, greeting |
+| title-2 | 22/28 | 700 | Section titles, sheet titles |
+| title-3 | 19/25 | 600 | Card titles, sub-sections |
 | body | 16/24 | 400 | Default text, inputs (never below 16 in inputs; prevents iOS zoom) |
 | body-strong | 16/24 | 600 | Labels, list item titles |
 | small | 14/20 | 400 | Hints, secondary lines |
@@ -72,8 +72,8 @@ Simple filled 24px icons (home, clipboard, calendar, bar chart, plus, camera, mi
 ## Components
 | Component | Anatomy and rules |
 |---|---|
-| **Top bar** (plate) | Avatar (38, opens Profile) · wordmark (opens Home) · page name · save status · **Coach** pill · menu button. Sticky. |
-| **Tab bar** | Home, Today, raised center **+** (56 circle, accent, 4px bg ring), Plan, Progress. Active tab: accent icon + label + 3px top bar. Hidden during intro. |
+| **Top bar** (plate) | Avatar (44 touch target, opens Profile) · wordmark (opens Home) · save status (only when offline or saving) · **Coach** pill · menu button. Sticky. No page name: the page title below it already says where you are (one title per screen, as in Apple's apps and Hevy). |
+| **Tab bar** | Home, Today, raised center **+** (60 circle, accent, 4px bg ring), Plan, Progress. Active tab: filled accent icon + accent label + 3px top bar; inactive: outline icon. Labels always shown, 13pt (a custom bar, because the native iOS tab bar uses ~10pt labels and cannot hold a center action). Light haptic on tap. Hidden during intro. |
 | **Page bar** | Page title (title-1) + right-aligned **AI check** pill (sparkle, accent-soft background). Not on Home or Coach. |
 | **Sub-tabs** | Horizontal scroll pills under the page bar, sticky. Active = ink fill. |
 | **Section card** ("layer card") | 5px accent top border, header (meta line + title-2), fields grid, footer with Back (‹) and primary "Done, next: X ›". |
