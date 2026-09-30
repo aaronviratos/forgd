@@ -48,7 +48,7 @@ Example: Weekly check-in is a 3-step flow (Measurements with waist first and oth
 - Migrate prototype data (all lb/in/oz) on import.
 
 ### 2. Account basics
-- Sign in with Apple, Google, and email (magic link or password with reset by email).
+- Sign in with Apple, Google, and email. **Email uses a one-time 6-digit code** (decided in Milestone 1): no passwords to forget, reset or leak, and no deep-link setup; iOS can autofill the code. New emails create an account. Production needs a custom email sender (Supabase's built-in sender allows only a few emails an hour).
 - Settings > Account: log out, change email or password, export my data, **delete account in the app** (Apple requires in-app deletion). Deletion signs the user out immediately and hard-deletes all data, photos and AI history within 30 days. Offer export first.
 - Consent screen with separate toggles, all revocable in Settings: AI features (data is sent through our server to the AI provider), Apple Health / Health Connect sync, Whoop, anonymous analytics, team visibility. Nothing optional is on by default.
 - Health data from Apple Health is never used for ads or sold (also an Apple rule).

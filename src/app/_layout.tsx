@@ -15,6 +15,10 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { backendConfigured } from '@/config/backend';
+import { DataProvider, useData } from '@/data/DataProvider';
+import { db } from '@/data/db';
+import { UiPrefsSync } from '@/data/UiPrefsSync';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 
 SplashScreen.preventAutoHideAsync();
@@ -29,33 +33,51 @@ export default function RootLayout() {
     SairaStencilOne_400Regular,
   });
 
-  useEffect(() => {
-    if (loaded || error) SplashScreen.hideAsync();
-  }, [loaded, error]);
-
   // Keep the splash screen up until fonts are ready (if they fail, fall back to system fonts).
   if (!loaded && !error) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider>
-          <BottomSheetModalProvider>
-            <ThemedStack />
-          </BottomSheetModalProvider>
-        </ThemeProvider>
+        <DataProvider>
+          <ThemeProvider>
+            <BottomSheetModalProvider>
+              <ThemedStack />
+            </BottomSheetModalProvider>
+          </ThemeProvider>
+        </DataProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
 
 function ThemedStack() {
-  const { colors } = useTheme();
+  const { colors, mode } = useTheme();
+  const { ready, userId } = useData();
+  // Until sign-in is configured, let development continue without it.
+  const signedIn = !!userId || !backendConfigured();
+
+  // Hide the splash screen once the saved session has been checked, so the app opens
+  // straight onto the right screen instead of flashing sign-in first.
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
+  if (!ready) return null;
+
   return (
     <>
-      {/* The top bar is the dark plate in both modes, so status bar text is always light. */}
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
+      {/* Main screens have the dark plate top bar, so status bar text is light there. */}
+      <StatusBar style={signedIn || mode === 'dark' ? 'light' : 'dark'} />
+      {db && userId ? <UiPrefsSync userId={userId} /> : null}
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
+        <Stack.Protected guard={signedIn}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="gallery" />
+        </Stack.Protected>
+        <Stack.Protected guard={!signedIn}>
+          <Stack.Screen name="sign-in" />
+        </Stack.Protected>
+      </Stack>
     </>
   );
 }

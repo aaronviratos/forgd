@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useContext, useMemo, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 import { useColorScheme } from 'react-native';
 
 import { buildTheme, DEFAULT_UI_PREFS, type Theme, type UiPrefs } from './theme';
@@ -12,19 +12,20 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 /**
  * Supplies the current theme to every screen. Follows the phone's light/dark setting
- * unless the user picks one. Prefs live in memory for now; step 5 (offline data)
- * saves them with the user's settings.
+ * unless the user picks one. While signed in on a phone, UiPrefsSync (src/data) loads and
+ * saves the choices in the user's profile.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const system = useColorScheme();
   const [prefs, setPrefsState] = useState<UiPrefs>(DEFAULT_UI_PREFS);
+  const setPrefs = useCallback(
+    (change: Partial<UiPrefs>) => setPrefsState((p) => ({ ...p, ...change })),
+    [],
+  );
 
   const value = useMemo<ThemeContextValue>(
-    () => ({
-      theme: buildTheme(prefs, system === 'dark' ? 'dark' : 'light'),
-      setPrefs: (change) => setPrefsState((p) => ({ ...p, ...change })),
-    }),
-    [prefs, system],
+    () => ({ theme: buildTheme(prefs, system === 'dark' ? 'dark' : 'light'), setPrefs }),
+    [prefs, system, setPrefs],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

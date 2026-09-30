@@ -136,3 +136,26 @@ export function buildTheme(prefs: UiPrefs, system: Mode | null | undefined): The
     },
   };
 }
+
+/**
+ * Reads saved appearance settings (profiles.ui), keeping only valid values, so an old
+ * or hand-edited value can never break the app. Unknown or missing keys are left out.
+ */
+export function parseUiPrefs(json: string | null | undefined): Partial<UiPrefs> {
+  let raw: unknown;
+  try {
+    raw = JSON.parse(json ?? '{}');
+  } catch {
+    return {};
+  }
+  if (!raw || typeof raw !== 'object') return {};
+  const r = raw as Record<string, unknown>;
+  const out: Partial<UiPrefs> = {};
+  if (r.theme === 'system' || r.theme === 'light' || r.theme === 'dark') out.theme = r.theme;
+  if (typeof r.accent === 'string' && r.accent in ACCENTS) out.accent = r.accent as AccentKey;
+  if (typeof r.surface === 'string' && r.surface in SURFACES) out.surface = r.surface as SurfaceKey;
+  if (typeof r.textSize === 'string' && r.textSize in TEXT_SIZES) {
+    out.textSize = r.textSize as TextSize;
+  }
+  return out;
+}

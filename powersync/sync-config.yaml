@@ -1,0 +1,43 @@
+# PowerSync Sync Streams: which rows each phone receives.
+# Deploy by pasting this into PowerSync dashboard > your instance > Sync Streams > Deploy.
+# Keep this file and the dashboard in step: change it here first, review, then deploy.
+config:
+  edition: 3
+
+streams:
+  # Everything that belongs to the signed-in user. Row-level security in Supabase
+  # guards writes; this decides what is copied down to the phone.
+  my_data:
+    auto_subscribe: true
+    queries:
+      - SELECT * FROM days WHERE user_id = auth.user_id()
+      - SELECT * FROM food_entries WHERE user_id = auth.user_id()
+      - SELECT * FROM exercise_entries WHERE user_id = auth.user_id()
+      - SELECT * FROM set_entries WHERE user_id = auth.user_id()
+      - SELECT * FROM protocol_items WHERE user_id = auth.user_id()
+      - SELECT * FROM protocol_logs WHERE user_id = auth.user_id()
+      - SELECT * FROM check_ins WHERE user_id = auth.user_id()
+      - SELECT * FROM measurements WHERE user_id = auth.user_id()
+      - SELECT * FROM lab_draws WHERE user_id = auth.user_id()
+      - SELECT * FROM foods WHERE user_id = auth.user_id()
+      - SELECT * FROM exercises WHERE user_id = auth.user_id()
+      - SELECT * FROM consents WHERE user_id = auth.user_id()
+      - SELECT * FROM xp_events WHERE user_id = auth.user_id()
+      - SELECT * FROM lift_bests WHERE user_id = auth.user_id()
+      - SELECT * FROM badges WHERE user_id = auth.user_id()
+      - SELECT * FROM insights WHERE user_id = auth.user_id()
+
+  # Rows keyed by the user's own id.
+  my_profile:
+    auto_subscribe: true
+    priority: 1 # sync the profile first (theme, units) before the rest
+    queries:
+      - SELECT * FROM profiles WHERE id = auth.user_id()
+      - SELECT * FROM user_stats WHERE id = auth.user_id()
+
+  # The same for everyone: built-in exercise library and server switches.
+  shared:
+    auto_subscribe: true
+    queries:
+      - SELECT * FROM exercises WHERE user_id IS NULL
+      - SELECT key AS id, value, updated_at FROM app_config

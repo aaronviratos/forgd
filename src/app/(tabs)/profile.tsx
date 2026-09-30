@@ -8,10 +8,12 @@ import { EmptyState } from '@/components/EmptyState';
 import { HubPage } from '@/components/HubPage';
 import { Target, User } from '@/components/icons';
 import { Text } from '@/components/Text';
+import { useData } from '@/data/DataProvider';
 import { space } from '@/theme/tokens';
 
 /** Profile (docs/03, U). Account settings arrive in step 8 of this milestone. */
 export default function Profile() {
+  const { session, signOut } = useData();
   return (
     <HubPage
       hub="profile"
@@ -36,6 +38,19 @@ export default function Profile() {
             <Card>
               <AppearanceSettings />
             </Card>
+            {session ? (
+              <>
+                <Text variant="title3">Account</Text>
+                <Card>
+                  <Text tone="muted">Signed in as</Text>
+                  <Text variant="bodyStrong">{session.user.email}</Text>
+                  <Button label="Sign out" onPress={signOut} />
+                  <Text variant="small" tone="muted">
+                    Signing out removes your data from this phone. It stays safe in your account.
+                  </Text>
+                </Card>
+              </>
+            ) : null}
             {__DEV__ && (
               <Button
                 variant="link"

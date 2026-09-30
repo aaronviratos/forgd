@@ -9,7 +9,9 @@ import { ChartBar, ClipboardText, CalendarBlank, House, Plus } from '@/component
 import { Menu } from '@/components/Menu';
 import { PlusMenu } from '@/components/PlusMenu';
 import { TabButton, tapFeedback } from '@/components/TabButton';
+import { SyncStatus } from '@/components/SyncStatus';
 import { TopBar } from '@/components/TopBar';
+import { db } from '@/data/db';
 import { useTheme } from '@/theme/ThemeProvider';
 import { radius } from '@/theme/tokens';
 
@@ -29,6 +31,7 @@ export default function TabsLayout() {
     <Tabs style={[styles.frame, { backgroundColor: colors.bg }]}>
       <View onLayout={(e) => setTopBarHeight(e.nativeEvent.layout.height)}>
         <TopBar menuOpen={menuOpen} onMenu={() => setMenuOpen((o) => !o)} />
+        {db ? <SyncStatus /> : null}
       </View>
 
       <TabSlot style={styles.page} />
