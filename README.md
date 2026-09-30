@@ -12,10 +12,12 @@ Needs Node.js 24 (LTS) and Git.
 
 ```bash
 npm install
-npm start
+npm run go
 ```
 
-Then scan the QR code with the **Expo Go** app on your phone, or press `w` to open it in a web browser. Once native modules are added (offline database, Sign in with Apple), Expo Go is no longer enough and you need a development build; see [docs/plans/milestone-1-foundation.md](docs/plans/milestone-1-foundation.md), step 9.
+Then scan the QR code with your phone's camera to open the app in **Expo Go** (phone and computer on the same Wi-Fi; add `-- --tunnel` if they are not). `npm run go` picks the computer's Wi-Fi address for the QR code and tells the bundler to use Expo Go's JavaScript database instead of the native one. On Windows PowerShell, use `npm.cmd` and `npx.cmd`.
+
+For a development build (native database, Sign in with Apple), use `npm start` instead; see [docs/plans/milestone-1-foundation.md](docs/plans/milestone-1-foundation.md), step 9.
 
 ## Before pushing
 
@@ -27,7 +29,8 @@ Runs type checks, lint and tests. GitHub runs the same checks on every push (the
 
 | Command | What it does |
 |---|---|
-| `npm start` | Start the dev server |
+| `npm run go` | Start for testing in Expo Go on a phone |
+| `npm start` | Start the dev server for a development build |
 | `npm run typecheck` | TypeScript errors |
 | `npm run lint` | Code style and common mistakes (auto-fix: `npx expo lint --fix`) |
 | `npm test` | Unit tests (`npm run test:watch` while working) |

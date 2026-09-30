@@ -12,7 +12,6 @@
     "@powersync/common": "^2.3.0",
     "@powersync/react": "^2.0.1",
     "@powersync/react-native": "^2.3.0",
-    "@react-native-async-storage/async-storage": "2.2.0",
     "@supabase/supabase-js": "^2.117.2",
     "@types/jest": "29.5.14",
     "eslint-config-expo": "~57.0.2",
@@ -66,6 +65,7 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
+    "go": "node scripts/expo-go.mjs",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
