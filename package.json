@@ -61,7 +61,7 @@
     "check": "npm run typecheck && npm run lint && npm test",
     "db:link": "supabase link --project-ref fsfvhrvhwhgtujbrnunf",
     "db:push": "supabase db push --linked",
-    "db:test": "supabase test db --linked"
+    "db:test": "node scripts/db-test.mjs"
   },
   "private": true,
   "jest": {
