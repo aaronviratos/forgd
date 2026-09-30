@@ -1,3 +1,6 @@
+// Must load first: fills in web-standard pieces phones lack.
+import '@/data/polyfills';
+
 import {
   AtkinsonHyperlegibleNext_400Regular,
   AtkinsonHyperlegibleNext_500Medium,
