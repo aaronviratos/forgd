@@ -8,7 +8,8 @@ const PLATE = '#24292B';
 
 const config: ExpoConfig = {
   name: BRAND.name,
-  slug: 'forgd',
+  // Internal Expo project name, neutral like the store ID (the brand name is pending).
+  slug: 'kefalos',
   version: '0.1.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
@@ -45,6 +46,10 @@ const config: ExpoConfig = {
       },
     ],
   ],
+  extra: {
+    // Links this app to the Expo project for cloud builds (EAS).
+    eas: { projectId: '2c8734f2-53cd-45cd-97ae-29aa4a52a99d' },
+  },
   experiments: {
     typedRoutes: true,
     reactCompiler: true,
