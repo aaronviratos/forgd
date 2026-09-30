@@ -1,3 +1,3 @@
-// Browsers already have a full URL implementation; replacing it breaks Expo Router on the
-// web preview. Phones use polyfills.native.ts instead.
+// Web: browsers already have these, and replacing URL breaks Expo Router on the web
+// preview. Phones load polyfills.native.ts instead (from index.js, before anything else).
 export {};

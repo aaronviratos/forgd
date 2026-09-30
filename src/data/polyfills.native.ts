@@ -1,5 +1,5 @@
 /**
- * Loaded before anything else (imported first in src/app/_layout.tsx).
+ * Loaded before anything else, from the app entry point (index.js).
  * Fills in web-standard pieces phones lack; browsers already have them (see polyfills.ts).
  */
 import 'react-native-url-polyfill/auto';
