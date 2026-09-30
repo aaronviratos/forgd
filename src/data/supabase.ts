@@ -14,6 +14,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY || '
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    // Sign-in links only work on the phone that asked for them (PKCE).
+    flowType: 'pkce',
   },
 });
 

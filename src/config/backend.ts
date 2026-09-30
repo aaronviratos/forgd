@@ -9,7 +9,7 @@
 export const SUPABASE_URL = 'https://fsfvhrvhwhgtujbrnunf.supabase.co';
 
 /** Supabase > Project Settings > API Keys > Publishable key (starts with sb_publishable_). */
-export const SUPABASE_PUBLISHABLE_KEY = '';
+export const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dmdSPcuzVfDF4p0oFgO1og_HNkxgYFv';
 
 /** PowerSync dashboard > your instance > Connect (instance URL). */
 export const POWERSYNC_URL = '';

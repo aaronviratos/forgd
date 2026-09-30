@@ -1,8 +1,10 @@
 /**
- * Sign in with an emailed code (docs/07, decision 2): enter your email, get a 6-digit
- * code, type it in. New emails create an account; existing ones sign in. No passwords
- * to forget, reset or leak.
+ * Sign in by email (docs/07, decision 2): enter your email, then either tap the link in
+ * the email (it opens the app, signed in) or type the 6-digit code if the email shows one.
+ * New emails create an account; existing ones sign in. No passwords to forget or leak.
  */
+import * as Linking from 'expo-linking';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +21,12 @@ import { space } from '@/theme/tokens';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const RESEND_AFTER_S = 60;
+
+/** Where the email's sign-in link sends the user back to: this screen, in this app. */
+const RETURN_URL = Linking.createURL('/sign-in');
+
+/** Codes already exchanged, so a repeated render never tries the same link twice. */
+const usedLinkCodes = new Set<string>();
 
 /** Plain-language versions of Supabase's sign-in errors. */
 function friendly(message: string): string {
@@ -44,6 +52,22 @@ export default function SignIn() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [wait, setWait] = useState(0);
+  // Present when the app was opened from the email's sign-in link.
+  const { code: linkCode, error_description: linkError } = useLocalSearchParams<{
+    code?: string;
+    error_description?: string;
+  }>();
+
+  useEffect(() => {
+    if (!linkCode || usedLinkCodes.has(linkCode)) return;
+    usedLinkCodes.add(linkCode);
+    supabase.auth.exchangeCodeForSession(linkCode).then(({ error: e }) => {
+      // On success the app switches to Home by itself.
+      if (e) setError(`${friendly(e.message)} Links work once, on the phone that asked for them.`);
+    });
+  }, [linkCode]);
+
+  const shownError = error ?? (linkError ? friendly(linkError) : undefined);
 
   // Countdown before a new code can be sent.
   useEffect(() => {
@@ -64,7 +88,7 @@ export default function SignIn() {
     setError(undefined);
     const { error: e } = await supabase.auth.signInWithOtp({
       email: cleanEmail,
-      options: { shouldCreateUser: true },
+      options: { shouldCreateUser: true, emailRedirectTo: RETURN_URL },
     });
     setBusy(false);
     if (e) return setError(friendly(e.message));
@@ -123,7 +147,7 @@ export default function SignIn() {
               <Field
                 label="Email"
                 hint="We'll email you a 6-digit code. No password needed."
-                error={error}
+                error={shownError}
               >
                 <Input
                   label="Email"
@@ -137,7 +161,7 @@ export default function SignIn() {
                   autoComplete="email"
                   textContentType="emailAddress"
                   returnKeyType="send"
-                  invalid={!!error}
+                  invalid={!!shownError}
                 />
               </Field>
               <Button
@@ -151,11 +175,15 @@ export default function SignIn() {
           ) : (
             <>
               <Text variant="title3">Check your email</Text>
+              <Text>
+                We emailed <Text variant="bodyStrong">{cleanEmail}</Text>. On this phone, tap the
+                link in the email to sign in.
+              </Text>
               <Text tone="muted">
-                We sent a code to <Text variant="bodyStrong">{cleanEmail}</Text>. It works for 1
+                If the email shows a 6-digit code instead, enter it here. Links and codes work for 1
                 hour.
               </Text>
-              <Field label="Code" error={error}>
+              <Field label="Code (if your email has one)" error={shownError}>
                 <Input
                   label="Code"
                   value={code}
@@ -167,15 +195,14 @@ export default function SignIn() {
                   textContentType="oneTimeCode"
                   maxLength={10}
                   returnKeyType="done"
-                  invalid={!!error}
-                  autoFocus
+                  invalid={!!shownError}
                 />
               </Field>
-              <Button variant="primary" label="Sign in" block loading={busy} onPress={verify} />
+              <Button label="Sign in with code" block loading={busy} onPress={verify} />
               <View style={styles.row}>
                 <Button
                   variant="link"
-                  label={wait > 0 ? `Send a new code in ${wait}s` : 'Send a new code'}
+                  label={wait > 0 ? `Send another email in ${wait}s` : 'Send another email'}
                   disabled={wait > 0 || busy}
                   onPress={sendCode}
                 />
