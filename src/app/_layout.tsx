@@ -15,7 +15,7 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { backendConfigured } from '@/config/backend';
+import { authConfigured } from '@/config/backend';
 import { DataProvider, useData } from '@/data/DataProvider';
 import { db } from '@/data/db';
 import { UiPrefsSync } from '@/data/UiPrefsSync';
@@ -55,7 +55,7 @@ function ThemedStack() {
   const { colors, mode } = useTheme();
   const { ready, userId } = useData();
   // Until sign-in is configured, let development continue without it.
-  const signedIn = !!userId || !backendConfigured();
+  const signedIn = !!userId || !authConfigured();
 
   // Hide the splash screen once the saved session has been checked, so the app opens
   // straight onto the right screen instead of flashing sign-in first.

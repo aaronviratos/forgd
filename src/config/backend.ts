@@ -14,4 +14,8 @@ export const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dmdSPcuzVfDF4p0oFgO1og_H
 /** PowerSync dashboard > your instance > Connect (instance URL). */
 export const POWERSYNC_URL = '';
 
-export const backendConfigured = () => !!SUPABASE_PUBLISHABLE_KEY && !!POWERSYNC_URL;
+/** Sign-in works once the Supabase key is set. */
+export const authConfigured = () => !!SUPABASE_PUBLISHABLE_KEY;
+
+/** Syncing to Supabase works once PowerSync is connected too; until then data stays on the phone. */
+export const syncConfigured = () => !!POWERSYNC_URL;

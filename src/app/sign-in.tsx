@@ -14,7 +14,7 @@ import { Card } from '@/components/Card';
 import { Field, Input } from '@/components/Field';
 import { Text } from '@/components/Text';
 import { Wordmark } from '@/components/Wordmark';
-import { backendConfigured } from '@/config/backend';
+import { authConfigured } from '@/config/backend';
 import { supabase } from '@/data/supabase';
 import { useTheme } from '@/theme/ThemeProvider';
 import { space } from '@/theme/tokens';
@@ -136,17 +136,17 @@ export default function SignIn() {
         </View>
 
         <Card raised>
-          {!backendConfigured() ? (
+          {!authConfigured() ? (
             <Text tone="warn">
-              Sign-in is not set up yet: the Supabase key and PowerSync address still need to be
-              added in src/config/backend.ts.
+              Sign-in is not set up yet: the Supabase key still needs to be added in
+              src/config/backend.ts.
             </Text>
           ) : step === 'email' ? (
             <>
               <Text variant="title3">Sign in or create an account</Text>
               <Field
                 label="Email"
-                hint="We'll email you a 6-digit code. No password needed."
+                hint="We'll email you a sign-in link. No password needed."
                 error={shownError}
               >
                 <Input
@@ -166,7 +166,7 @@ export default function SignIn() {
               </Field>
               <Button
                 variant="primary"
-                label="Email me a code"
+                label="Email me a sign-in link"
                 block
                 loading={busy}
                 onPress={sendCode}

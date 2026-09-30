@@ -8,7 +8,7 @@ import { PowerSyncContext } from '@powersync/react';
 import type { Session } from '@supabase/supabase-js';
 import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
-import { backendConfigured } from '@/config/backend';
+import { authConfigured, syncConfigured } from '@/config/backend';
 
 import { SupabaseConnector } from './connector';
 import { db } from './db';
@@ -26,11 +26,11 @@ const DataContext = createContext<DataState | null>(null);
 
 export function DataProvider({ children }: { children: ReactNode }) {
   // Without a configured backend there is no session to wait for.
-  const [ready, setReady] = useState(() => !backendConfigured());
+  const [ready, setReady] = useState(() => !authConfigured());
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    if (!backendConfigured()) return;
+    if (!authConfigured()) return;
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setReady(true);
@@ -45,7 +45,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!db) return;
     if (userId) {
-      db.connect(new SupabaseConnector());
+      // Without PowerSync connected yet, changes wait on the phone and upload later.
+      if (syncConfigured()) db.connect(new SupabaseConnector());
     } else if (ready) {
       db.disconnectAndClear();
     }
