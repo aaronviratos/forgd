@@ -32,6 +32,14 @@ Runs type checks, lint and tests. GitHub runs the same checks on every push (the
 | `npm run lint` | Code style and common mistakes (auto-fix: `npx expo lint --fix`) |
 | `npm test` | Unit tests (`npm run test:watch` while working) |
 | `npx expo install <pkg>` | Add a package. Always use this instead of `npm install <pkg>`, so versions match the Expo SDK |
+| `npm run db:push` | Apply new database changes in `supabase/migrations/` to the Supabase project |
+| `npm run db:test` | Run the privacy tests in `supabase/tests/` against the Supabase project (changes are rolled back) |
+
+## Database (Supabase)
+
+One-time setup on each computer: `npx supabase login` (opens the browser), then `npm run db:link` (asks for the database password; keep it in a password manager, never in git or chat).
+
+Change the database only by adding a new file to `supabase/migrations/` and running `npm run db:push`, never by editing tables in the dashboard, so every change is reviewed in git. Every table must have row-level security; `npm run db:test` fails if one does not.
 
 ## Layout
 
