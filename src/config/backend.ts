@@ -12,7 +12,7 @@ export const SUPABASE_URL = 'https://fsfvhrvhwhgtujbrnunf.supabase.co';
 export const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dmdSPcuzVfDF4p0oFgO1og_HNkxgYFv';
 
 /** PowerSync dashboard > your instance > Connect (instance URL). */
-export const POWERSYNC_URL = '';
+export const POWERSYNC_URL = 'https://6abd5b22f0708554f16a9eee.powersync.journeyapps.com';
 
 /** Sign-in works once the Supabase key is set. */
 export const authConfigured = () => !!SUPABASE_PUBLISHABLE_KEY;
