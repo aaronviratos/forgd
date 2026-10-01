@@ -11,7 +11,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -19,6 +19,8 @@ import { authConfigured } from '@/config/backend';
 import { DataProvider, useData } from '@/data/DataProvider';
 import { db } from '@/data/db';
 import { UiPrefsSync } from '@/data/UiPrefsSync';
+import { readCachedPrefs } from '@/theme/prefsCache';
+import type { UiPrefs } from '@/theme/theme';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 
 SplashScreen.preventAutoHideAsync();
@@ -33,14 +35,21 @@ export default function RootLayout() {
     SairaStencilOne_400Regular,
   });
 
-  // Keep the splash screen up until fonts are ready (if they fail, fall back to system fonts).
-  if (!loaded && !error) return null;
+  // The on-phone copy of the appearance settings, so the first frame is in the user's colours.
+  const [cachedPrefs, setCachedPrefs] = useState<Partial<UiPrefs>>();
+  useEffect(() => {
+    readCachedPrefs().then(setCachedPrefs);
+  }, []);
+
+  // Keep the splash screen up until fonts and appearance settings are ready
+  // (if fonts fail, fall back to system fonts).
+  if ((!loaded && !error) || !cachedPrefs) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <DataProvider>
-          <ThemeProvider>
+          <ThemeProvider initialPrefs={cachedPrefs}>
             <BottomSheetModalProvider>
               <ThemedStack />
             </BottomSheetModalProvider>

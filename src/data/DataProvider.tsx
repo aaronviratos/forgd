@@ -9,6 +9,7 @@ import type { Session } from '@supabase/supabase-js';
 import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
 import { authConfigured, syncConfigured } from '@/config/backend';
+import { clearCachedPrefs } from '@/theme/prefsCache';
 
 import { SupabaseConnector } from './connector';
 import { db } from './db';
@@ -58,6 +59,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     userId,
     signOut: async () => {
       await supabase.auth.signOut();
+      clearCachedPrefs();
     },
   };
 
