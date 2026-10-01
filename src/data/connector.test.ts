@@ -57,6 +57,11 @@ describe('uploading changes', () => {
     expect(result?.error?.code).toBe('42501');
   });
 
+  it('sends JSON columns as JSON, not quoted text', async () => {
+    await applyChange(change('profiles', UpdateType.PATCH, { ui: '{"accent":"teal"}' }));
+    expect(calls[0].args[0]).toEqual({ ui: { accent: 'teal' } });
+  });
+
   it('sends edits and deletes by id', async () => {
     await applyChange(change('food_entries', UpdateType.PATCH, { qty: 2 }));
     await applyChange(change('food_entries', UpdateType.DELETE));

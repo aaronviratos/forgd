@@ -378,3 +378,32 @@ export const WRITABLE: ReadonlySet<TableName> = new Set<TableName>([
   'lab_draws',
   'foods',
 ]);
+
+/**
+ * Columns stored as JSON (jsonb) in Supabase. On the phone they are text, so uploads must
+ * turn that text back into JSON; otherwise Supabase stores a quoted string instead of the
+ * value. schema.test.ts checks this list against the migrations.
+ */
+export const JSON_COLUMNS: Partial<Record<TableName, ReadonlySet<string>>> = {
+  profiles: new Set([
+    'targets',
+    'base',
+    'diet',
+    'medical',
+    'track',
+    'program',
+    'nutrition_plan',
+    'measure_prefs',
+    'journey',
+    'ui',
+  ]),
+  days: new Set(['pain', 'side_effects', 'flags', 'sections_done', 'sources']),
+  food_entries: new Set(['swap']),
+  protocol_items: new Set(['frequency']),
+  check_ins: new Set(['photos', 'summary']),
+  lab_draws: new Set(['markers']),
+  foods: new Set(['ingredients', 'swap']),
+  user_stats: new Set(['stat_xp', 'week_gains']),
+  insights: new Set(['content']),
+  app_config: new Set(['value']),
+};

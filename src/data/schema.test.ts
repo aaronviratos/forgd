@@ -5,7 +5,7 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-import { AppSchema } from './schema';
+import { AppSchema, JSON_COLUMNS } from './schema';
 
 const DIR = join(__dirname, '../../supabase/migrations');
 
@@ -33,6 +33,21 @@ function serverColumns(): Record<string, Set<string>> {
   return tables;
 }
 
+/** jsonb columns per table from the migrations. */
+function serverJsonColumns(): Record<string, string[]> {
+  const sql = readdirSync(DIR)
+    .filter((f) => f.endsWith('.sql'))
+    .sort()
+    .map((f) => readFileSync(join(DIR, f), 'utf8'))
+    .join('\n');
+  const out: Record<string, string[]> = {};
+  for (const m of sql.matchAll(/create table public\.(\w+) \(([\s\S]*?)\n\);/g)) {
+    const cols = [...m[2].matchAll(/^ {2}([a-z_]+) jsonb/gm)].map((x) => x[1]);
+    if (cols.length) out[m[1]] = cols.sort();
+  }
+  return out;
+}
+
 const server = serverColumns();
 const phone = Object.fromEntries(
   AppSchema.tables.map((t) => [t.name, new Set(t.columns.map((c) => c.name))]),
@@ -48,5 +63,14 @@ describe('phone schema matches Supabase', () => {
     // app_config is keyed by `key`, synced to the phone as `id`.
     const want = table === 'app_config' ? expected.filter((c) => c !== 'key') : expected;
     expect([...(phone[table] ?? [])].sort()).toEqual(want.sort());
+  });
+});
+
+describe('JSON columns', () => {
+  it('lists every jsonb column, so uploads send real JSON instead of quoted text', () => {
+    const listed = Object.fromEntries(
+      Object.entries(JSON_COLUMNS).map(([t, cols]) => [t, [...(cols ?? [])].sort()]),
+    );
+    expect(listed).toEqual(serverJsonColumns());
   });
 });

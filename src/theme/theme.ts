@@ -145,6 +145,8 @@ export function parseUiPrefs(json: string | null | undefined): Partial<UiPrefs> 
   let raw: unknown;
   try {
     raw = JSON.parse(json ?? '{}');
+    // Tolerate a value that was stored as quoted JSON text.
+    if (typeof raw === 'string') raw = JSON.parse(raw);
   } catch {
     return {};
   }

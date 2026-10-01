@@ -7,6 +7,10 @@ describe('saved appearance settings', () => {
     ).toEqual({ theme: 'dark', accent: 'teal', surface: 'paper', textSize: 'large' });
   });
 
+  it('reads a value that was stored as quoted JSON text', () => {
+    expect(parseUiPrefs(JSON.stringify('{"accent":"teal"}'))).toEqual({ accent: 'teal' });
+  });
+
   it('drops anything invalid instead of breaking', () => {
     expect(parseUiPrefs('{"theme":"neon","accent":"plaid","textSize":9}')).toEqual({});
     expect(parseUiPrefs('not json')).toEqual({});

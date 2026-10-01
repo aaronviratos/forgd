@@ -16,7 +16,7 @@ import {
 
 import { POWERSYNC_URL } from '@/config/backend';
 
-import { type TableName, WRITABLE } from './schema';
+import { JSON_COLUMNS, type TableName, WRITABLE } from './schema';
 import { supabase } from './supabase';
 
 /**
@@ -37,6 +37,27 @@ function withoutNulls(record: Record<string, unknown>) {
   );
 }
 
+/**
+ * JSON columns are text on the phone. Send them as real JSON, or Supabase would store a
+ * quoted string ("{\"accent\":...}") and the app could not read its own settings back.
+ */
+function withJson(table: TableName, record: Record<string, unknown>) {
+  const jsonCols = JSON_COLUMNS[table];
+  if (!jsonCols) return record;
+  const out = { ...record };
+  for (const col of jsonCols) {
+    const v = out[col];
+    if (typeof v === 'string') {
+      try {
+        out[col] = JSON.parse(v);
+      } catch {
+        // Not valid JSON: leave it, and let the server reject it if it must.
+      }
+    }
+  }
+  return out;
+}
+
 /** Sends one change to Supabase. Exported for tests. */
 export async function applyChange(op: CrudEntry) {
   const table = op.table as TableName;
@@ -45,7 +66,7 @@ export async function applyChange(op: CrudEntry) {
     return { error: { code: '42501', message: `${table} is read-only from the app` } };
   }
   const q = supabase.from(table);
-  const data = op.opData ?? {};
+  const data = withJson(table, op.opData ?? {});
 
   switch (op.op) {
     case UpdateType.PUT: {
