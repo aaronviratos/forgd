@@ -31,8 +31,12 @@ const usedLinkCodes = new Set<string>();
 /** Plain-language versions of Supabase's sign-in errors. */
 function friendly(message: string): string {
   const m = message.toLowerCase();
+  if (m.includes('email rate limit')) {
+    // Hourly cap on emails (Supabase's built-in sender allows only a few an hour).
+    return 'Too many sign-in emails sent recently. Try again in about an hour.';
+  }
   if (m.includes('rate limit') || m.includes('security purposes')) {
-    return 'Too many codes asked for. Wait a minute, then try again.';
+    return 'Please wait a minute before asking for another email.';
   }
   if (m.includes('expired') || m.includes('invalid')) {
     return 'That code did not work. Check it, or send a new one.';
