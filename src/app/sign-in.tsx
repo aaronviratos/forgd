@@ -1,7 +1,9 @@
 /**
- * Sign in by email (docs/07, decision 2): enter your email, then either tap the link in
- * the email (it opens the app, signed in) or type the 6-digit code if the email shows one.
- * New emails create an account; existing ones sign in. No passwords to forget or leak.
+ * Sign in by email (docs/07, decision 2): enter your email, then type the 6-digit code from
+ * the email. New emails create an account; existing ones sign in. No passwords to forget or
+ * leak. Links in the email are also handled (they open this screen with ?code=), for when
+ * the published app's emails include one again; in Expo Go on Wi-Fi, Supabase cannot send a
+ * link back to the app (it refuses IP-address return URLs), so the emails carry only the code.
  */
 import * as Linking from 'expo-linking';
 import { useLocalSearchParams } from 'expo-router';
@@ -150,7 +152,7 @@ export default function SignIn() {
               <Text variant="title3">Sign in or create an account</Text>
               <Field
                 label="Email"
-                hint="We'll email you a sign-in link. No password needed."
+                hint="We'll email you a 6-digit code. No password needed."
                 error={shownError}
               >
                 <Input
@@ -170,7 +172,7 @@ export default function SignIn() {
               </Field>
               <Button
                 variant="primary"
-                label="Email me a sign-in link"
+                label="Email me a code"
                 block
                 loading={busy}
                 onPress={sendCode}
@@ -180,14 +182,10 @@ export default function SignIn() {
             <>
               <Text variant="title3">Check your email</Text>
               <Text>
-                We emailed <Text variant="bodyStrong">{cleanEmail}</Text>. On this phone, tap the
-                link in the email to sign in.
+                We emailed a code to <Text variant="bodyStrong">{cleanEmail}</Text>. Enter it below.
+                It works for 1 hour.
               </Text>
-              <Text tone="muted">
-                If the email shows a 6-digit code instead, enter it here. Links and codes work for 1
-                hour.
-              </Text>
-              <Field label="Code (if your email has one)" error={shownError}>
+              <Field label="Code" error={shownError}>
                 <Input
                   label="Code"
                   value={code}
@@ -200,13 +198,14 @@ export default function SignIn() {
                   maxLength={10}
                   returnKeyType="done"
                   invalid={!!shownError}
+                  autoFocus
                 />
               </Field>
-              <Button label="Sign in with code" block loading={busy} onPress={verify} />
+              <Button variant="primary" label="Sign in" block loading={busy} onPress={verify} />
               <View style={styles.row}>
                 <Button
                   variant="link"
-                  label={wait > 0 ? `Send another email in ${wait}s` : 'Send another email'}
+                  label={wait > 0 ? `Send a new code in ${wait}s` : 'Send a new code'}
                   disabled={wait > 0 || busy}
                   onPress={sendCode}
                 />
